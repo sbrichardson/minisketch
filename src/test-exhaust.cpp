@@ -175,6 +175,7 @@ int main(void) {
             int count = counts[bits];
             while (count < (1 << bits) && count * bits <= weight) {
                 auto ret = TestAll(bits, 0, count, 4);
+                if (ret.empty()) break;
                 auto ret2 = TestAll(bits, 1, count, 4);
                 auto ret3 = TestAll(bits, 2, count, 4);
                 CHECK(ret2.empty() || ret == ret2);

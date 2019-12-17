@@ -30,6 +30,33 @@ AC_ARG_ENABLE(benchmark,
     [use_benchmark=$enableval],
     [use_benchmark=no])
 
+m4_define([SUPPORTED_FIELDS], [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64])
+m4_foreach([FIELD], [SUPPORTED_FIELDS], [enable_field_[]FIELD=no])
+
+AC_MSG_CHECKING([which field sizes to build])
+AC_ARG_ENABLE([fields], AS_HELP_STRING([--enable-fields=LIST], [Comma-separated list of field sizes to build. Default=all. Available sizes:] m4_translit(m4_defn([SUPPORTED_FIELDS]), [,], [ ])), [], [enable_fields=SUPPORTED_FIELDS])
+enable_fields=`echo "$enable_fields" | sed 's/,/ /g'`
+if test "x$enable_fields" = xno || test "x$enable_fields" = x; then
+    enable_fields=no
+    AC_MSG_RESULT([(none)])
+else
+    for arg in $enable_fields
+    do
+	case $arg in m4_foreach([FIELD], [SUPPORTED_FIELDS], [
+	    FIELD)
+		enable_field_[]FIELD=yes
+		AC_DEFINE(HAVE_FIELD_[]FIELD, [1],
+		[Define to 1 if field size] FIELD [is enabled.])
+		;;])
+	    *)
+		AC_MSG_RESULT([])
+		AC_MSG_ERROR([unknown field size: $arg])
+		;;
+	esac
+    done
+    AC_MSG_RESULT([$enable_fields])
+fi
+
 dnl Check for pthread compile/link requirements
 AX_PTHREAD
 
